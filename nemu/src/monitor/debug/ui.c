@@ -98,13 +98,14 @@ static int cmd_x(char *args) {
     return 0;
   }
 
-  bool success = true;
-  uint32_t addr = expr(expr_str, &success);
+  // bool success = true;
+  // uint32_t addr = expr(expr_str, &success);
   // if (!success) {
   //   printf("Invalid expression: %s\n", expr_str);
   //   return 0;
   // }
 
+  uint32_t addr = strtoul(expr_str, NULL, 16);
   for (int i = 0; i < n; i++) {
     uint32_t data = vaddr_read(addr + i * 4, 4);
     printf("0x%08x: 0x%08x\n", addr + i * 4, data);
