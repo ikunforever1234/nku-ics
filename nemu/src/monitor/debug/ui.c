@@ -51,6 +51,34 @@ static int cmd_si(char *args) {
   return 0;
 }
 
+static int cmd_info(char *args) {
+  if (args == NULL) {
+    printf("Usage: info [r/w]\n");
+    return 0;
+  }
+
+  if (strcmp(args, "r") == 0) {
+    printf("Registers:\n");
+    printf("eax: 0x%08x\n", cpu.eax);
+    printf("ecx: 0x%08x\n", cpu.ecx);
+    printf("edx: 0x%08x\n", cpu.edx);
+    printf("ebx: 0x%08x\n", cpu.ebx);
+    printf("esp: 0x%08x\n", cpu.esp);
+    printf("ebp: 0x%08x\n", cpu.ebp);
+    printf("esi: 0x%08x\n", cpu.esi);
+    printf("edi: 0x%08x\n", cpu.edi);
+    printf("eip: 0x%08x\n", cpu.eip);
+  }
+  else if (strcmp(args, "w") == 0) {
+    
+    return 0;
+  }
+  else {
+    printf("Unknown info command '%s'\n", args);
+  }
+  return 0;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -64,6 +92,7 @@ static struct {
 
   /* TODO: Add more commands */
   { "si", "Step into instruction(s)", cmd_si },
+  { "info", "Display register/watchpoint status", cmd_info },
 };
 
 #define NR_CMD (sizeof(cmd_table) / sizeof(cmd_table[0]))
