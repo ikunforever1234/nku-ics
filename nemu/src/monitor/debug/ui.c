@@ -98,7 +98,7 @@ static int cmd_x(char *args) {
     return 0;
   }
 
-  bool success;
+  bool success = true;
   uint32_t addr = expr(expr_str, &success);
   if (!success) {
     printf("Invalid expression: %s\n", expr_str);
