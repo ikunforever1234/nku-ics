@@ -100,7 +100,7 @@ static int cmd_x(char *args) {
   }
 
   char *expr_end = NULL;
-  uint32_t addr = strtoul(expr_str, &expr_end, 16);
+  uint32_t addr = strtoul(expr_str, NULL, 16);
   if (*expr_str == '\0' || *expr_end != '\0') {
     printf("EXPR must be a hexadecimal number, e.g. 0x100000\n");
     return 0;
