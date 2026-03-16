@@ -92,26 +92,26 @@ static int cmd_x(char *args) {
     return 0;
   }
 
-  int n = atoi(n_str);
-  if (n <= 0) {
-    printf("Invalid number of words: %d\n", n);
+  char *n_end = NULL;
+  long n = strtol(n_str, &n_end, 10);
+  if (*n_str == '\0' || *n_end != '\0' || n <= 0) {
+    printf("Invalid number of words: %s\n", n_str);
     return 0;
   }
 
-  // bool success = true;
-  // uint32_t addr = expr(expr_str, &success);
-  // if (!success) {
-  //   printf("Invalid expression: %s\n", expr_str);
-  //   return 0;
-  // }
-
-  uint32_t addr = strtoul(expr_str, NULL, 16);
-  for (int i = 0; i < n; i++) {
-    uint32_t data = vaddr_read(addr + i * 4, 4);
-    printf("0x%08x: 0x%08x\n", addr + i * 4, data);
-    
+  char *expr_end = NULL;
+  uint32_t addr = strtoul(expr_str, &expr_end, 16);
+  if (*expr_str == '\0' || *expr_end != '\0') {
+    printf("EXPR must be a hexadecimal number, e.g. 0x100000\n");
+    return 0;
   }
-  
+
+  for (int i = 0; i < n; i++) {
+    uint32_t cur_addr = addr + i * 4;
+    uint32_t data = vaddr_read(cur_addr, 4);
+    printf("0x%08x: 0x%08x\n", cur_addr, data);
+  }
+
   return 0;
 }
 
