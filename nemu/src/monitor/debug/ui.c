@@ -100,10 +100,10 @@ static int cmd_x(char *args) {
 
   bool success = true;
   uint32_t addr = expr(expr_str, &success);
-  if (!success) {
-    printf("Invalid expression: %s\n", expr_str);
-    return 0;
-  }
+  // if (!success) {
+  //   printf("Invalid expression: %s\n", expr_str);
+  //   return 0;
+  // }
 
   for (int i = 0; i < n; i++) {
     uint32_t data = vaddr_read(addr + i * 4, 4);
