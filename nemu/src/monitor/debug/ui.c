@@ -99,12 +99,7 @@ static int cmd_x(char *args) {
     return 0;
   }
 
-  char *expr_end = NULL;
   uint32_t addr = strtoul(expr_str, NULL, 16);
-  if (*expr_str == '\0' || *expr_end != '\0') {
-    printf("EXPR must be a hexadecimal number, e.g. 0x100000\n");
-    return 0;
-  }
 
   for (int i = 0; i < n; i++) {
     uint32_t cur_addr = addr + i * 4;
