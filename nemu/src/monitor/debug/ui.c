@@ -78,6 +78,41 @@ static int cmd_info(char *args) {
   return 0;
 }
 
+static int cmd_x(char *args) {
+  if (args == NULL) {
+    printf("Usage: x N EXPR\n");
+    return 0;
+  }
+
+  char *n_str = strtok(args, " ");
+  char *expr_str = strtok(NULL, " ");
+
+  if (n_str == NULL || expr_str == NULL) {
+    printf("Usage: x N EXPR\n");
+    return 0;
+  }
+
+  int n = atoi(n_str);
+  if (n <= 0) {
+    printf("Invalid number of words: %d\n", n);
+    return 0;
+  }
+
+  bool success;
+  uint32_t addr = expr(expr_str, &success);
+  if (!success) {
+    printf("Invalid expression: %s\n", expr_str);
+    return 0;
+  }
+
+  for (int i = 0; i < n; i++) {
+    uint32_t data = vaddr_read(addr + i * 4, 4);
+    printf("0x%08x: 0x%08x\n", addr + i * 4, data);
+  }
+  
+  return 0;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -92,6 +127,7 @@ static struct {
   /* TODO: Add more commands */
   { "si", "Step into instruction(s)", cmd_si },
   { "info", "Display register/watchpoint status", cmd_info },
+  { "x", "Examine memory", cmd_x },
 };
 
 #define NR_CMD (sizeof(cmd_table) / sizeof(cmd_table[0]))
