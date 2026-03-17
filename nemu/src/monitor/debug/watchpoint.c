@@ -80,5 +80,18 @@ WP* add_watchpoint(const char *expr_str, bool *success) {
   return wp;
 }
 
+bool delete_watchpoint(int no) {
+  WP *cur = head;
+
+  while (cur != NULL) {
+    if (cur->NO == no) {
+      free_wp(cur);
+      return true;
+    }
+    cur = cur->next;
+  }
+
+  return false;
+}
 
 
