@@ -5,6 +5,8 @@
  */
 #include <sys/types.h>
 #include <regex.h>
+#include <stdlib.h>
+#include <string.h>
 
 enum {
   TK_NOTYPE = 256,
@@ -77,6 +79,201 @@ typedef struct token {
 
 Token tokens[32];
 int nr_token;
+
+static bool get_reg_val(const char *s, uint32_t *val) {
+  int i;
+  if (s == NULL || s[0] != '$') {
+    return false;
+  }
+
+  const char *name = s + 1;
+  if (strcmp(name, "eip") == 0) {
+    *val = cpu.eip;
+    return true;
+  }
+
+  for (i = 0; i < 8; i ++) {
+    if (strcmp(name, regsl[i]) == 0) {
+      *val = reg_l(i);
+      return true;
+    }
+  }
+
+  for (i = 0; i < 8; i ++) {
+    if (strcmp(name, regsw[i]) == 0) {
+      *val = reg_w(i);
+      return true;
+    }
+  }
+
+  for (i = 0; i < 8; i ++) {
+    if (strcmp(name, regsb[i]) == 0) {
+      *val = reg_b(i);
+      return true;
+    }
+  }
+
+  return false;
+}
+
+static bool check_parentheses(int p, int q) {
+  int i;
+  int level = 0;
+
+  if (tokens[p].type != '(' || tokens[q].type != ')') {
+    return false;
+  }
+
+  for (i = p; i <= q; i ++) {
+    if (tokens[i].type == '(') {
+      level ++;
+    }
+    else if (tokens[i].type == ')') {
+      level --;
+      if (level == 0 && i < q) {
+        return false;
+      }
+      if (level < 0) {
+        return false;
+      }
+    }
+  }
+
+  return level == 0;
+}
+
+static int precedence(int type) {
+  switch (type) {
+    case TK_OR: return 1;
+    case TK_AND: return 2;
+    case TK_EQ:
+    case TK_NEQ: return 3;
+    case '+':
+    case '-': return 4;
+    case '*':
+    case '/': return 5;
+    default: return 100;
+  }
+}
+
+static uint32_t eval(int p, int q, bool *success) {
+  int i;
+  int op = -1;
+  int op_prec = 100;
+  int level = 0;
+
+  if (p > q) {
+    *success = false;
+    return 0;
+  }
+
+  if (p == q) {
+    if (tokens[p].type == TK_DEC) {
+      return (uint32_t)strtoul(tokens[p].str, NULL, 10);
+    }
+    else if (tokens[p].type == TK_HEX) {
+      return (uint32_t)strtoul(tokens[p].str, NULL, 16);
+    }
+    else if (tokens[p].type == TK_REG) {
+      uint32_t val = 0;
+      if (!get_reg_val(tokens[p].str, &val)) {
+        *success = false;
+        return 0;
+      }
+      return val;
+    }
+
+    *success = false;
+    return 0;
+  }
+
+  if (check_parentheses(p, q)) {
+    return eval(p + 1, q - 1, success);
+  }
+
+  for (i = p; i <= q; i ++) {
+    if (tokens[i].type == '(') {
+      level ++;
+      continue;
+    }
+    if (tokens[i].type == ')') {
+      level --;
+      if (level < 0) {
+        *success = false;
+        return 0;
+      }
+      continue;
+    }
+
+    if (level == 0) {
+      int cur_prec = precedence(tokens[i].type);
+      if (cur_prec <= 5 && cur_prec <= op_prec) {
+        op_prec = cur_prec;
+        op = i;
+      }
+    }
+  }
+
+  if (level != 0) {
+    *success = false;
+    return 0;
+  }
+
+  if (op == -1) {
+    if (tokens[p].type == TK_NEG) {
+      uint32_t val = eval(p + 1, q, success);
+      if (!*success) {
+        return 0;
+      }
+      return (uint32_t)(-(int32_t)val);
+    }
+    else if (tokens[p].type == TK_NOT) {
+      uint32_t val = eval(p + 1, q, success);
+      if (!*success) {
+        return 0;
+      }
+      return !val;
+    }
+    else if (tokens[p].type == TK_DEREF) {
+      uint32_t addr = eval(p + 1, q, success);
+      if (!*success) {
+        return 0;
+      }
+      return vaddr_read(addr, 4);
+    }
+
+    *success = false;
+    return 0;
+  }
+
+  uint32_t val1 = eval(p, op - 1, success);
+  if (!*success) {
+    return 0;
+  }
+  uint32_t val2 = eval(op + 1, q, success);
+  if (!*success) {
+    return 0;
+  }
+
+  switch (tokens[op].type) {
+    case '+': return val1 + val2;
+    case '-': return val1 - val2;
+    case '*': return val1 * val2;
+    case '/':
+      if (val2 == 0) {
+        *success = false;
+        return 0;
+      }
+      return val1 / val2;
+    case TK_EQ: return val1 == val2;
+    case TK_NEQ: return val1 != val2;
+    case TK_AND: return val1 && val2;
+    case TK_OR: return val1 || val2;
+    default:
+      *success = false;
+      return 0;
+  }
+}
 
 static bool make_token(char *e) {
   int position = 0;
@@ -171,8 +368,11 @@ uint32_t expr(char *e, bool *success) {
     return 0;
   }
 
-  /* TODO: Insert codes to evaluate the expression. */
-  TODO();
+  if (nr_token == 0) {
+    *success = false;
+    return 0;
+  }
 
-  return 0;
+  *success = true;
+  return eval(0, nr_token - 1, success);
 }
