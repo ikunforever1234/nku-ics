@@ -64,4 +64,21 @@ void free_wp(WP *wp) {
   free_ = cur;
 }
 
+WP* add_watchpoint(const char *expr_str, bool *success) {
+  assert(expr_str != NULL);
+
+  WP *wp = new_wp();
+  strncpy(wp->expr, expr_str, sizeof(wp->expr) - 1);
+  wp->expr[sizeof(wp->expr) - 1] = '\0';
+
+  wp->last_val = expr(wp->expr, success);
+  if (!*success) {
+    free_wp(wp);
+    return NULL;
+  }
+
+  return wp;
+}
+
+
 
