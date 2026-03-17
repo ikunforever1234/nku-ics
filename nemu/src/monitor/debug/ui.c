@@ -78,6 +78,58 @@ static int cmd_info(char *args) {
   return 0;
 }
 
+static int cmd_w(char *args) {
+  if (args == NULL) {
+    printf("Usage: w EXPR\n");
+    return 0;
+  }
+
+  while (*args == ' ') {
+    args ++;
+  }
+  if (*args == '\0') {
+    printf("Usage: w EXPR\n");
+    return 0;
+  }
+
+  bool success = true;
+  WP *wp = add_watchpoint(args, &success);
+  if (!success || wp == NULL) {
+    printf("Bad expression: %s\n", args);
+    return 0;
+  }
+
+  printf("Watchpoint %d: %s\n", wp->NO, wp->expr);
+  return 0;
+}
+
+static int cmd_d(char *args) {
+  if (args == NULL) {
+    printf("Usage: d N\n");
+    return 0;
+  }
+
+  while (*args == ' ') {
+    args ++;
+  }
+
+  char *end = NULL;
+  long no = strtol(args, &end, 10);
+  if (*args == '\0' || *end != '\0' || no < 0) {
+    printf("Invalid watchpoint number: %s\n", args);
+    return 0;
+  }
+
+  if (delete_watchpoint((int)no)) {
+    printf("Watchpoint %ld deleted.\n", no);
+  }
+  else {
+    printf("No watchpoint number %ld.\n", no);
+  }
+
+  return 0;
+}
+
 static int cmd_x(char *args) {
   if (args == NULL) {
     printf("Usage: x N EXPR\n");
@@ -130,6 +182,8 @@ static struct {
   { "si", "Step into instruction(s)", cmd_si },
   { "info", "Display register/watchpoint status", cmd_info },
   { "x", "Examine memory", cmd_x },
+  { "w", "Set a watchpoint: w EXPR", cmd_w },
+  { "d", "Delete a watchpoint: d N", cmd_d },
 };
 
 #define NR_CMD (sizeof(cmd_table) / sizeof(cmd_table[0]))
