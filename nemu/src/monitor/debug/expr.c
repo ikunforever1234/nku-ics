@@ -363,25 +363,22 @@ static uint32_t eval(int p, int q, bool *success) {
 }
 
 uint32_t expr(char *e, bool *success) {
-  int i;
   uint32_t result;
 
-  printf("[expr] input: %s\n", e);
+  // printf("[expr] input: %s\n", e);
 
   if (!make_token(e)) {
     *success = false;
-    printf("[expr] tokenize failed\n");
     return 0;
   }
 
   printf("[expr] tokens (%d):\n", nr_token);
-  for (i = 0; i < nr_token; i ++) {
+  for (int i = 0; i < nr_token; i ++) {
     printf("  [%d] type=%d str='%s'\n", i, tokens[i].type, tokens[i].str);
   }
 
   if (nr_token == 0) {
     *success = false;
-    printf("[expr] empty expression\n");
     return 0;
   }
 
