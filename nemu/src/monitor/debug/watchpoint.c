@@ -102,9 +102,9 @@ void list_watchpoints(void) {
     return;
   }
 
-  printf("Num\tType\tDisp\tEnb\tWhat\n");
+  printf("Num\tWhat\n");
   while (cur != NULL) {
-    printf("%d\twatchpoint\tkeep\ty\t%s\n", cur->NO, cur->expr);
+    printf("%d\t%s\n", cur->NO, cur->expr);
     cur = cur->next;
   }
 }
