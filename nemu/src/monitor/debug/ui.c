@@ -70,7 +70,7 @@ static int cmd_info(char *args) {
     printf("eip: 0x%08x\n", cpu.eip);
   }
   else if (strcmp(args, "w") == 0) {
-    
+    list_watchpoints();
   }
   else {
     printf("Unknown info command '%s'\n", args);
