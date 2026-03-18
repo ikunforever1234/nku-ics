@@ -94,4 +94,44 @@ bool delete_watchpoint(int no) {
   return false;
 }
 
+void list_watchpoints(void) {
+  WP *cur = head;
+
+  if (cur == NULL) {
+    printf("No watchpoints.\n");
+    return;
+  }
+
+  printf("Num\tType\tDisp\tEnb\tWhat\n");
+  while (cur != NULL) {
+    printf("%d\twatchpoint\tkeep\ty\t%s\n", cur->NO, cur->expr);
+    cur = cur->next;
+  }
+}
+
+bool check_watchpoints(void) {
+  WP *cur = head;
+  bool triggered = false;
+
+  while (cur != NULL) {
+    bool success = true;
+    uint32_t new_val = expr(cur->expr, &success);
+    if (!success) {
+      printf("watchpoint %d evaluation failed: %s\n", cur->NO, cur->expr);
+      return true;
+    }
+
+    if (new_val != cur->last_val) {
+      printf("Watchpoint %d triggered: %s\n", cur->NO, cur->expr);
+      printf("Old value = 0x%08x (%u)\n", cur->last_val, cur->last_val);
+      printf("New value = 0x%08x (%u)\n", new_val, new_val);
+      cur->last_val = new_val;
+      triggered = true;
+    }
+
+    cur = cur->next;
+  }
+
+  return triggered;
+}
 
