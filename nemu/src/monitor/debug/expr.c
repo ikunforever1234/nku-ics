@@ -372,10 +372,10 @@ uint32_t expr(char *e, bool *success) {
     return 0;
   }
 
-  printf("[expr] tokens (%d):\n", nr_token);
-  for (int i = 0; i < nr_token; i ++) {
-    printf("  [%d] type=%d str='%s'\n", i, tokens[i].type, tokens[i].str);
-  }
+  // printf("[expr] tokens (%d):\n", nr_token);
+  // for (int i = 0; i < nr_token; i ++) {
+  //   printf("  [%d] type=%d str='%s'\n", i, tokens[i].type, tokens[i].str);
+  // }
 
   if (nr_token == 0) {
     *success = false;
@@ -384,6 +384,6 @@ uint32_t expr(char *e, bool *success) {
 
   *success = true;
   result = eval(0, nr_token - 1, success);
-  printf("[expr] success=%d result=0x%08x (%u)\n", *success, result, result);
+  // printf("[expr] success=%d result=0x%08x (%u)\n", *success, result, result);
   return result;
 }
