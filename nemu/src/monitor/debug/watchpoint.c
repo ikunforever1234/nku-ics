@@ -104,7 +104,7 @@ void list_watchpoints(void) {
 
   printf("Num\tWhat\n");
   while (cur != NULL) {
-    printf("%d\t%s\n", cur->NO, cur->expr);
+    printf("%d\t%s\t%08x\n", cur->NO, cur->expr, cur->last_val);
     cur = cur->next;
   }
 }
