@@ -99,7 +99,7 @@ static int cmd_w(char *args) {
     return 0;
   }
 
-  printf("Watchpoint %d: %s\n", wp->NO, wp->expr);
+  printf("Watchpoint %d: %s (%d)\n", wp->NO, wp->expr , wp->last_val);
   return 0;
 }
 
