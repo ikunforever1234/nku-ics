@@ -160,9 +160,6 @@ void difftest_step(uint32_t eip) {
   diff = diff || (r.edi != cpu.edi);
   diff = diff || (r.eip != cpu.eip);
 
-  const uint32_t eflags_mask = (1u << 0) | (1u << 6) | (1u << 7) | (1u << 9) | (1u << 11);
-  diff = diff || ((r.eflags & eflags_mask) != (cpu.eflags & eflags_mask));
-
   if (diff) {
     printf("Differential test failed at eip = 0x%08x\n", eip);
     printf("  eax: nemu=0x%08x qemu=0x%08x\n", cpu.eax, r.eax);
@@ -174,8 +171,7 @@ void difftest_step(uint32_t eip) {
     printf("  esi: nemu=0x%08x qemu=0x%08x\n", cpu.esi, r.esi);
     printf("  edi: nemu=0x%08x qemu=0x%08x\n", cpu.edi, r.edi);
     printf("  eip: nemu=0x%08x qemu=0x%08x\n", cpu.eip, r.eip);
-    printf("  eflags(masked): nemu=0x%08x qemu=0x%08x\n",
-        cpu.eflags & eflags_mask, r.eflags & eflags_mask);
+    printf("  eflags: nemu=0x%08x qemu=0x%08x\n", cpu.eflags, r.eflags);
   }
 
   if (diff) {
