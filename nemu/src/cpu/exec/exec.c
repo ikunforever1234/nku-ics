@@ -51,17 +51,17 @@ make_group(gp2,
 
   /* 0xf6, 0xf7 */
 make_group(gp3,
-    IDEX(test_I, test), EMPTY, EMPTY, EMPTY,
+  IDEX(test_I, test), EMPTY, EX(not), EMPTY,
   EX(mul), EX(imul1), EX(div), EX(idiv))
 
   /* 0xfe */
 make_group(gp4,
-  EX(inc), EMPTY, EMPTY, EMPTY,
+  EX(inc), EX(dec), EMPTY, EMPTY,
     EMPTY, EMPTY, EMPTY, EMPTY)
 
   /* 0xff */
 make_group(gp5,
-  EX(inc), EMPTY, EMPTY, EX(neg),
+  EX(inc), EX(dec), IDEX(E, call_rm), EX(neg),
   IDEX(E, jmp_rm), EMPTY, EX(push), EMPTY)
 
   /* 0x0f 0x01*/
@@ -90,8 +90,8 @@ opcode_entry opcode_table [512] = {
   /* 0x3c */	IDEXW(I2a, cmp, 1), IDEX(I2a, cmp), EMPTY, EMPTY,
   /* 0x40 */	IDEX(r, inc), IDEX(r, inc), IDEX(r, inc), IDEX(r, inc),
   /* 0x44 */	IDEX(r, inc), IDEX(r, inc), IDEX(r, inc), IDEX(r, inc),
-  /* 0x48 */	EMPTY, EMPTY, EMPTY, EMPTY,
-  /* 0x4c */	EMPTY, EMPTY, EMPTY, EMPTY,
+  /* 0x48 */	IDEX(r, dec), IDEX(r, dec), IDEX(r, dec), IDEX(r, dec),
+  /* 0x4c */	IDEX(r, dec), IDEX(r, dec), IDEX(r, dec), IDEX(r, dec),
   /* 0x50 */  IDEX(r,push), IDEX(r,push), IDEX(r,push), IDEX(r,push),
   /* 0x54 */  IDEX(r,push), IDEX(r,push), IDEX(r,push), IDEX(r,push),
   /* 0x58 */  IDEX(r,pop), IDEX(r,pop), IDEX(r,pop), IDEX(r,pop),
@@ -111,7 +111,7 @@ opcode_entry opcode_table [512] = {
   /* 0x90 */  EX(nop), EMPTY, EMPTY, EMPTY,
   /* 0x94 */	EMPTY, EMPTY, EMPTY, EMPTY,
 
-  /* 0x98 */	EMPTY, EMPTY, EMPTY, EMPTY,
+  /* 0x98 */	EMPTY, EX(cltd), EMPTY, EMPTY,
   /* 0x9c */	EMPTY, EMPTY, EMPTY, EMPTY,
   /* 0xa0 */	IDEXW(O2a, mov, 1), IDEX(O2a, mov), IDEXW(a2O, mov, 1), IDEX(a2O, mov),
   /* 0xa4 */	EMPTY, EMPTY, EMPTY, EMPTY,
@@ -123,7 +123,7 @@ opcode_entry opcode_table [512] = {
   /* 0xbc */	IDEX(mov_I2r, mov), IDEX(mov_I2r, mov), IDEX(mov_I2r, mov), IDEX(mov_I2r, mov),
   /* 0xc0 */	IDEXW(gp2_Ib2E, gp2, 1), IDEX(gp2_Ib2E, gp2), IDEXW(I,ret,2), EX(ret),
   /* 0xc4 */	EMPTY, EMPTY, IDEXW(mov_I2E, mov, 1), IDEX(mov_I2E, mov),
-  /* 0xc8 */	EMPTY, EMPTY, EMPTY, EMPTY,
+  /* 0xc8 */	EMPTY, EX(leave), EMPTY, EMPTY,
   /* 0xcc */	EMPTY, EMPTY, EMPTY, EMPTY,
   /* 0xd0 */	IDEXW(gp2_1_E, gp2, 1), IDEX(gp2_1_E, gp2), IDEXW(gp2_cl2E, gp2, 1), IDEX(gp2_cl2E, gp2),
   /* 0xd4 */	EMPTY, EMPTY, EX(nemu_trap), EMPTY,
