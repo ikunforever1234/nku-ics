@@ -6,8 +6,7 @@ make_EHelper(movzx);
 make_EHelper(push);
 make_EHelper(pop);
 make_EHelper(lea);
-make_EHelper(xchg);
-make_EHelper(xchg_r2a);
+
 make_EHelper(sub);
 make_EHelper(add);
 make_EHelper(xor);
