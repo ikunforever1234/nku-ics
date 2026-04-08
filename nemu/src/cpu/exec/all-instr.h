@@ -9,6 +9,11 @@ make_EHelper(lea);
 
 make_EHelper(sub);
 make_EHelper(add);
+make_EHelper(cmp);
+make_EHelper(mul);
+make_EHelper(imul1);
+make_EHelper(imul2);
+make_EHelper(imul3);
 make_EHelper(xor);
 make_EHelper(and);
 make_EHelper(test);
