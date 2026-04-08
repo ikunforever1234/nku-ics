@@ -1,7 +1,10 @@
 #include "cpu/exec.h"
 
 make_EHelper(test) {
-  TODO();
+  rtl_and(&t2, &id_dest->val, &id_src->val);
+  rtl_update_ZFSF(&t2, id_dest->width);
+  rtl_set_CF(&tzero);
+  rtl_set_OF(&tzero);
 
   print_asm_template2(test);
 }
@@ -30,21 +33,30 @@ make_EHelper(or) {
 }
 
 make_EHelper(sar) {
-  TODO();
+  rtl_andi(&t0, &id_src->val, 0x1f);
+  rtl_sar(&t2, &id_dest->val, &t0);
+  operand_write(id_dest, &t2);
+  rtl_update_ZFSF(&t2, id_dest->width);
   // unnecessary to update CF and OF in NEMU
 
   print_asm_template2(sar);
 }
 
 make_EHelper(shl) {
-  TODO();
+  rtl_andi(&t0, &id_src->val, 0x1f);
+  rtl_shl(&t2, &id_dest->val, &t0);
+  operand_write(id_dest, &t2);
+  rtl_update_ZFSF(&t2, id_dest->width);
   // unnecessary to update CF and OF in NEMU
 
   print_asm_template2(shl);
 }
 
 make_EHelper(shr) {
-  TODO();
+  rtl_andi(&t0, &id_src->val, 0x1f);
+  rtl_shr(&t2, &id_dest->val, &t0);
+  operand_write(id_dest, &t2);
+  rtl_update_ZFSF(&t2, id_dest->width);
   // unnecessary to update CF and OF in NEMU
 
   print_asm_template2(shr);
