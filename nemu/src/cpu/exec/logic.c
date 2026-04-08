@@ -44,6 +44,10 @@ make_EHelper(or) {
 
 make_EHelper(sar) {
   rtl_andi(&t0, &id_src->val, 0x1f);
+  if (t0 == 0) {
+    print_asm_template2(sar);
+    return;
+  }
   rtl_sar(&t2, &id_dest->val, &t0);
   operand_write(id_dest, &t2);
   rtl_update_ZFSF(&t2, id_dest->width);
@@ -54,6 +58,10 @@ make_EHelper(sar) {
 
 make_EHelper(shl) {
   rtl_andi(&t0, &id_src->val, 0x1f);
+  if (t0 == 0) {
+    print_asm_template2(shl);
+    return;
+  }
   rtl_shl(&t2, &id_dest->val, &t0);
   operand_write(id_dest, &t2);
   rtl_update_ZFSF(&t2, id_dest->width);
@@ -64,6 +72,10 @@ make_EHelper(shl) {
 
 make_EHelper(shr) {
   rtl_andi(&t0, &id_src->val, 0x1f);
+  if (t0 == 0) {
+    print_asm_template2(shr);
+    return;
+  }
   rtl_shr(&t2, &id_dest->val, &t0);
   operand_write(id_dest, &t2);
   rtl_update_ZFSF(&t2, id_dest->width);
