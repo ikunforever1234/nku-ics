@@ -31,6 +31,7 @@ void diff_test_skip_nemu() { is_skip_nemu = true; }
     regs.esi = cpu.esi; \
     regs.edi = cpu.edi; \
     regs.eip = cpu.eip; \
+    regs.eflags = cpu.eflags; \
   } while (0)
 
 static uint8_t mbr[] = {
@@ -149,7 +150,33 @@ void difftest_step(uint32_t eip) {
 
   // TODO: Check the registers state with QEMU.
   // Set `diff` as `true` if they are not the same.
-  TODO();
+  diff = diff || (r.eax != cpu.eax);
+  diff = diff || (r.ecx != cpu.ecx);
+  diff = diff || (r.edx != cpu.edx);
+  diff = diff || (r.ebx != cpu.ebx);
+  diff = diff || (r.esp != cpu.esp);
+  diff = diff || (r.ebp != cpu.ebp);
+  diff = diff || (r.esi != cpu.esi);
+  diff = diff || (r.edi != cpu.edi);
+  diff = diff || (r.eip != cpu.eip);
+
+  const uint32_t eflags_mask = (1u << 0) | (1u << 6) | (1u << 7) | (1u << 9) | (1u << 11);
+  diff = diff || ((r.eflags & eflags_mask) != (cpu.eflags & eflags_mask));
+
+  if (diff) {
+    printf("Differential test failed at eip = 0x%08x\n", eip);
+    printf("  eax: nemu=0x%08x qemu=0x%08x\n", cpu.eax, r.eax);
+    printf("  ecx: nemu=0x%08x qemu=0x%08x\n", cpu.ecx, r.ecx);
+    printf("  edx: nemu=0x%08x qemu=0x%08x\n", cpu.edx, r.edx);
+    printf("  ebx: nemu=0x%08x qemu=0x%08x\n", cpu.ebx, r.ebx);
+    printf("  esp: nemu=0x%08x qemu=0x%08x\n", cpu.esp, r.esp);
+    printf("  ebp: nemu=0x%08x qemu=0x%08x\n", cpu.ebp, r.ebp);
+    printf("  esi: nemu=0x%08x qemu=0x%08x\n", cpu.esi, r.esi);
+    printf("  edi: nemu=0x%08x qemu=0x%08x\n", cpu.edi, r.edi);
+    printf("  eip: nemu=0x%08x qemu=0x%08x\n", cpu.eip, r.eip);
+    printf("  eflags(masked): nemu=0x%08x qemu=0x%08x\n",
+        cpu.eflags & eflags_mask, r.eflags & eflags_mask);
+  }
 
   if (diff) {
     nemu_state = NEMU_END;
