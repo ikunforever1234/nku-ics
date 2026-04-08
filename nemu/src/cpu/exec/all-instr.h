@@ -38,6 +38,8 @@ make_EHelper(jmp_rm);
 make_EHelper(jcc);
 make_EHelper(cltd);
 make_EHelper(leave);
+make_EHelper(in);
+make_EHelper(out);
 
 make_EHelper(operand_size);
 make_EHelper(nop);
