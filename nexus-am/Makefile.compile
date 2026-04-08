@@ -83,4 +83,4 @@ DEPS = $(addprefix $(DST_DIR)/, $(addsuffix .d, $(basename $(SRCS))))
 am:
 	@$(MAKE) -C $(AM_HOME)
 $(sort $(LIBS)): %:
-	@if [ -f $(AM_HOME)/libs/$*/Makefile ]; then $(MAKE) -C $(AM_HOME)/libs/$*; fi
+	-@$(MAKE) -C $(AM_HOME)/libs/$*
