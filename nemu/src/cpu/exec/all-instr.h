@@ -28,6 +28,7 @@ make_EHelper(jmp_rm);
 make_EHelper(jcc);
 
 make_EHelper(operand_size);
+make_EHelper(nop);
 
 make_EHelper(inv);
 make_EHelper(nemu_trap);
