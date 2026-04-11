@@ -167,6 +167,31 @@ static int cmd_x(char *args) {
   return 0;
 }
 
+static int cmd_p(char *args) {
+  if (args == NULL) {
+    printf("Usage: p EXPR\n");
+    return 0;
+  }
+
+  while (*args == ' ') {
+    args ++;
+  }
+  if (*args == '\0') {
+    printf("Usage: p EXPR\n");
+    return 0;
+  }
+
+  bool success = true;
+  uint32_t result = expr(args, &success);
+  if (!success) {
+    printf("Bad expression: %s\n", args);
+    return 0;
+  }
+
+  printf("%u (0x%08x)\n", result, result);
+  return 0;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -182,6 +207,7 @@ static struct {
   { "si", "Step into instruction(s)", cmd_si },
   { "info", "Display register/watchpoint status", cmd_info },
   { "x", "Examine memory", cmd_x },
+  { "p", "Evaluate expression: p EXPR", cmd_p },
   { "w", "Set a watchpoint: w EXPR", cmd_w },
   { "d", "Delete a watchpoint: d N", cmd_d },
 };
