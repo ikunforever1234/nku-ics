@@ -174,7 +174,7 @@ static bool get_reg_val(const char *s, uint32_t *val) {
   }
 
   const char *name = s + 1;
-  if (strcmp(name, "eip") == 0) {
+  if (strcmp(name, "eip") == 0 || strcmp(name, "pc") == 0) {
     *val = cpu.eip;
     return true;
   }
