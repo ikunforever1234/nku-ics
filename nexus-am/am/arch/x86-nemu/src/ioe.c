@@ -29,22 +29,22 @@ static inline int min(int a, int b) {
 }
 
 void _draw_rect(const uint32_t *pixels, int x, int y, int w, int h) {
-  int i;
-  for (i = 0; i < _screen.width * _screen.height; i++) {
-    fb[i] = i;
+  // int i;
+  // for (i = 0; i < _screen.width * _screen.height; i++) {
+  //   fb[i] = i;
+  // }
+
+  if (w <= 0 || h <= 0 || x >= _screen.width || y >= _screen.height) {
+    return;
   }
 
-  // if (w <= 0 || h <= 0 || x >= _screen.width || y >= _screen.height) {
-  //   return;
-  // }
+  int cp_w = min(w, _screen.width - x);
+  int cp_h = min(h, _screen.height - y);
 
-  // int cp_w = min(w, _screen.width - x);
-  // int cp_h = min(h, _screen.height - y);
-
-  // for (int j = 0; j < cp_h; j++) {
-  //   memcpy(&fb[(y + j) * _screen.width + x], pixels, cp_w * sizeof(uint32_t));
-  //   pixels += w;
-  // }
+  for (int j = 0; j < cp_h; j++) {
+    memcpy(&fb[(y + j) * _screen.width + x], pixels, cp_w * sizeof(uint32_t));
+    pixels += w;
+  }
 }
 
 void _draw_sync() {
