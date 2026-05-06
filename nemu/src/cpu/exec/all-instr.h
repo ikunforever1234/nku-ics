@@ -42,6 +42,8 @@ make_EHelper(cltd);
 make_EHelper(leave);
 make_EHelper(in);
 make_EHelper(out);
+make_EHelper(lidt);
+make_EHelper(int);
 
 make_EHelper(operand_size);
 make_EHelper(nop);

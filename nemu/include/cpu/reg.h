@@ -32,6 +32,11 @@ typedef struct {
     };
   };
 
+  struct {
+    uint16_t limit;
+    uint32_t base;
+  } idtr;
+
   union {
     rtlreg_t eflags;
     struct {
