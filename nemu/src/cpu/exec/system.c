@@ -4,7 +4,12 @@ void diff_test_skip_qemu();
 void diff_test_skip_nemu();
 
 make_EHelper(lidt) {
-  TODO();
+  rtlreg_t base = id_dest->addr;
+  rtlreg_t limit = vaddr_read(base, 2);
+  rtlreg_t ptr = vaddr_read(base + 2, 4);
+
+  cpu.idtr.limit = limit;
+  cpu.idtr.base = ptr;
 
   print_asm_template1(lidt);
 }
