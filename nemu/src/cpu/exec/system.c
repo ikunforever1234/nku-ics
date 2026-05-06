@@ -2,6 +2,7 @@
 
 void diff_test_skip_qemu();
 void diff_test_skip_nemu();
+extern void raise_intr(uint8_t NO, vaddr_t ret_addr);
 
 make_EHelper(lidt) {
   rtlreg_t base = id_dest->addr;
@@ -31,7 +32,9 @@ make_EHelper(mov_cr2r) {
 }
 
 make_EHelper(int) {
-  TODO();
+  raise_intr(id_dest->val & 0xff, *eip);
+  decoding.is_jmp = 1;
+  decoding.jmp_eip = cpu.eip;
 
   print_asm("int %s", id_dest->str);
 
