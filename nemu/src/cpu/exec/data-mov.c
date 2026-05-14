@@ -41,7 +41,6 @@ make_EHelper(popa) {
   rtl_pop(&t0);
   rtl_sr_l(R_EBP, &t0);
   rtl_pop(&t0);
-  rtl_pop(&t0);
   rtl_sr_l(R_EBX, &t0);
   rtl_pop(&t0);
   rtl_sr_l(R_EDX, &t0);
