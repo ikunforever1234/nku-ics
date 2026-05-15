@@ -60,13 +60,13 @@ size_t fs_read(int fd, void *buf, size_t len) {
     return 0;
   }
 
+  if (fd == FD_EVENTS) {
+    return events_read(buf, len);
+  }
+
   Finfo *f = &file_table[fd];
   size_t remain = f->size > (size_t)f->open_offset ? f->size - (size_t)f->open_offset : 0;
   size_t nread = len < remain ? len : remain;
-
-  if (fd == FD_EVENTS) {
-    return events_read(buf, nread);
-  }
 
   if (fd == FD_DISPINFO) {
     dispinfo_read(buf, f->open_offset, nread);

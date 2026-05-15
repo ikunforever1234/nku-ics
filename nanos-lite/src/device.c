@@ -3,13 +3,32 @@
 #define NAME(key) \
   [_KEY_##key] = #key,
 
+#define KEYDOWN_MASK 0x8000
+
 static const char *keyname[256] __attribute__((used)) = {
   [_KEY_NONE] = "NONE",
   _KEYS(NAME)
 };
 
 size_t events_read(void *buf, size_t len) {
-  return 0;
+  char event[32];
+  int key = _read_key();
+
+  if (key != _KEY_NONE) {
+    const char *type = (key & KEYDOWN_MASK) ? "kd" : "ku";
+    key &= ~KEYDOWN_MASK;
+    sprintf(event, "%s %s\n", type, keyname[key]);
+  }
+  else {
+    sprintf(event, "t %lu\n", _uptime());
+  }
+
+  size_t event_len = strlen(event);
+  if (len > event_len) {
+    len = event_len;
+  }
+  memcpy(buf, event, len);
+  return len;
 }
 
 static char dispinfo[128] __attribute__((used));
@@ -53,5 +72,6 @@ void init_device() {
 
   // TODO: print the string to array `dispinfo` with the format
   // described in the Navy-apps convention
-    dispinfo_size = sprintf(dispinfo, "WIDTH : %d\nHEIGHT: %d\n", _screen.width, _screen.height);
+  sprintf(dispinfo, "WIDTH : %d\nHEIGHT: %d\n", _screen.width, _screen.height);
+  dispinfo_size = strlen(dispinfo);
 }
