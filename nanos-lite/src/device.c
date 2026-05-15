@@ -29,6 +29,23 @@ void dispinfo_read(void *buf, off_t offset, size_t len) {
 }
 
 void fb_write(const void *buf, off_t offset, size_t len) {
+  size_t pixels = len / sizeof(uint32_t);
+  const uint32_t *p = buf;
+  int x = (offset / sizeof(uint32_t)) % _screen.width;
+  int y = (offset / sizeof(uint32_t)) / _screen.width;
+
+  while (pixels > 0) {
+    int w = _screen.width - x;
+    if (w > (int)pixels) {
+      w = (int)pixels;
+    }
+
+    _draw_rect(p, x, y, w, 1);
+    p += w;
+    pixels -= w;
+    x = 0;
+    y ++;
+  }
 }
 
 void init_device() {
