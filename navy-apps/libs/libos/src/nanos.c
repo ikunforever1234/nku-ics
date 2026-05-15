@@ -61,12 +61,7 @@ off_t _lseek(int fd, off_t offset, int whence) {
 
 // not implement but used
 int _fstat(int fd, struct stat *buf) {
-  buf->st_mode = S_IFCHR;
   return 0;
-}
-
-int isatty(int fd) {
-  return fd >= 0 && fd <= 2;
 }
 
 int execve(const char *fname, char * const argv[], char *const envp[]) {
