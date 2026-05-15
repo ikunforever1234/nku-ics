@@ -23,6 +23,9 @@ _RegSet* do_syscall(_RegSet *r) {
       }
       SYSCALL_ARG1(r) = (uintptr_t)-1;
       return r;
+    case SYS_brk:
+      SYSCALL_ARG1(r) = 0;
+      return r;
     case SYS_exit:
       _halt(a[1]);
       return NULL;
