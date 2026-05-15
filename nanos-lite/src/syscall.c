@@ -1,4 +1,5 @@
 #include "common.h"
+#include "fs.h"
 #include "syscall.h"
 
 _RegSet* do_syscall(_RegSet *r) {
@@ -13,16 +14,10 @@ _RegSet* do_syscall(_RegSet *r) {
       SYSCALL_ARG1(r) = 1;
       return r;
     case SYS_write:
-      // Log("SYS_write fd=%d count=%d buf=%p", (int)a[1], (int)a[3], (void *)a[2]);
-      if (a[1] == 1 || a[1] == 2) {
-        const char *buf = (const char *)a[2];
-        for (size_t i = 0; i < a[3]; i ++) {
-          _putc(buf[i]);
-        }
-        SYSCALL_ARG1(r) = a[3];
-        return r;
-      }
-      SYSCALL_ARG1(r) = (uintptr_t)-1;
+      SYSCALL_ARG1(r) = fs_write(a[1], (const void *)a[2], a[3]);
+      return r;
+    case SYS_lseek:
+      SYSCALL_ARG1(r) = fs_lseek(a[1], a[2], a[3]);
       return r;
     case SYS_brk:
       SYSCALL_ARG1(r) = 0;
