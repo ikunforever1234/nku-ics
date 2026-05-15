@@ -12,6 +12,17 @@ _RegSet* do_syscall(_RegSet *r) {
     case SYS_none:
       SYSCALL_ARG1(r) = 1;
       return r;
+    case SYS_write:
+      if (a[1] == 1 || a[1] == 2) {
+        const char *buf = (const char *)a[2];
+        for (size_t i = 0; i < a[3]; i ++) {
+          _putc(buf[i]);
+        }
+        SYSCALL_ARG1(r) = a[3];
+        return r;
+      }
+      SYSCALL_ARG1(r) = (uintptr_t)-1;
+      return r;
     case SYS_exit:
       _halt(a[1]);
       return NULL;
