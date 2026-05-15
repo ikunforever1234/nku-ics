@@ -27,9 +27,11 @@ extern void ramdisk_write(const void *buf, off_t offset, size_t len);
 extern size_t events_read(void *buf, size_t len);
 extern void dispinfo_read(void *buf, off_t offset, size_t len);
 extern void fb_write(const void *buf, off_t offset, size_t len);
+extern size_t dispinfo_size;
 
 void init_fs() {
   file_table[FD_FB].size = (size_t)_screen.width * _screen.height * sizeof(uint32_t);
+  file_table[FD_DISPINFO].size = dispinfo_size;
 }
 
 int fs_open(const char *pathname, int flags, int mode) {
