@@ -13,6 +13,15 @@ _RegSet* do_syscall(_RegSet *r) {
     case SYS_none:
       SYSCALL_ARG1(r) = 1;
       return r;
+    case SYS_open:
+      SYSCALL_ARG1(r) = fs_open((const char *)a[1], a[2], a[3]);
+      return r;
+    case SYS_read:
+      SYSCALL_ARG1(r) = fs_read(a[1], (void *)a[2], a[3]);
+      return r;
+    case SYS_close:
+      SYSCALL_ARG1(r) = fs_close(a[1]);
+      return r;
     case SYS_write:
       SYSCALL_ARG1(r) = fs_write(a[1], (const void *)a[2], a[3]);
       return r;
