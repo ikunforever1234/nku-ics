@@ -13,6 +13,7 @@ _RegSet* do_syscall(_RegSet *r) {
       SYSCALL_ARG1(r) = 1;
       return r;
     case SYS_write:
+      Log("SYS_write fd=%d count=%d buf=%p", (int)a[1], (int)a[3], (void *)a[2]);
       if (a[1] == 1 || a[1] == 2) {
         const char *buf = (const char *)a[2];
         for (size_t i = 0; i < a[3]; i ++) {
