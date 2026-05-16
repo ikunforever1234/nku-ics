@@ -37,6 +37,8 @@ typedef struct {
     uint32_t base;
   } idtr;
 
+  unsigned int cs;
+  
   union {
     rtlreg_t eflags;
     struct {
