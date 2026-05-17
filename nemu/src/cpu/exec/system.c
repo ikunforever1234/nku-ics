@@ -19,10 +19,6 @@ make_EHelper(mov_r2cr) {
   TODO();
 
   print_asm("movl %%%s,%%cr%d", reg_name(id_src->reg, 4), id_dest->reg);
-
-#ifdef DIFF_TEST
-  diff_test_skip_qemu();
-#endif
 }
 
 make_EHelper(mov_cr2r) {
