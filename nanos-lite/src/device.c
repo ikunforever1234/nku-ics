@@ -20,7 +20,8 @@ size_t events_read(void *buf, size_t len) {
     sprintf(event, "%s %s\n", type, keyname[key]);
   }
   else {
-    sprintf(event, "t %u\n", (unsigned)_uptime());
+    // sprintf(event, "t %u\n", (unsigned)_uptime());
+    sprintf(event, "t %lu\n", _uptime());
   }
 
   size_t event_len = strlen(event);
