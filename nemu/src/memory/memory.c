@@ -29,7 +29,44 @@ void paddr_write(paddr_t addr, int len, uint32_t data) {
   memcpy(guest_to_host(addr), &data, len);
 }
 
+static paddr_t page_translate(vaddr_t addr, bool is_write) {
+  assert(cpu.cr0.protect_enable && cpu.cr0.paging);
+
+  uint32_t pde_index = (addr >> 22) & 0x3ff;
+  uint32_t pte_index = (addr >> 12) & 0x3ff;
+  uint32_t offset = addr & PAGE_MASK;
+
+  paddr_t pde_addr = (cpu.cr3.page_directory_base << 12) + pde_index * sizeof(PDE);
+  PDE pde;
+  pde.val = paddr_read(pde_addr, 4);
+  assert(pde.present);
+  if (!pde.accessed) {
+    pde.accessed = 1;
+    paddr_write(pde_addr, 4, pde.val);
+  }
+
+  paddr_t pte_addr = (pde.page_frame << 12) + pte_index * sizeof(PTE);
+  PTE pte;
+  pte.val = paddr_read(pte_addr, 4);
+  assert(pte.present);
+  if (!pte.accessed || (is_write && !pte.dirty)) {
+    pte.accessed = 1;
+    if (is_write) {
+      pte.dirty = 1;
+    }
+    paddr_write(pte_addr, 4, pte.val);
+  }
+
+  return (pte.page_frame << 12) | offset;
+}
+
 uint32_t vaddr_read(vaddr_t addr, int len) {
+  if ((addr & PAGE_MASK) + len > PAGE_SIZE) {
+    assert(0);
+  }
+  if (cpu.cr0.protect_enable && cpu.cr0.paging) {
+    addr = page_translate(addr, false);
+  }
   return paddr_read(addr, len);
 }
 
