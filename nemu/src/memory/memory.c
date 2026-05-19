@@ -71,5 +71,11 @@ uint32_t vaddr_read(vaddr_t addr, int len) {
 }
 
 void vaddr_write(vaddr_t addr, int len, uint32_t data) {
+  if ((addr & PAGE_MASK) + len > PAGE_SIZE) {
+    assert(0);
+  }
+  if (cpu.cr0.protect_enable && cpu.cr0.paging) {
+    addr = page_translate(addr, true);
+  }
   paddr_write(addr, len, data);
 }
