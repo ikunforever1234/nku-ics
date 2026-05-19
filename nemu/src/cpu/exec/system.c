@@ -26,7 +26,13 @@ make_EHelper(mov_r2cr) {
 }
 
 make_EHelper(mov_cr2r) {
-  TODO();
+  switch (id_src->reg) {
+    case 0: id_dest->val = cpu.cr0.val; break;
+    case 3: id_dest->val = cpu.cr3.val; break;
+    default: panic("unsupported cr%d", id_src->reg);
+  }
+
+  operand_write(id_dest, &id_dest->val);
 
   print_asm("movl %%cr%d,%%%s", id_src->reg, reg_name(id_dest->reg, 4));
 
