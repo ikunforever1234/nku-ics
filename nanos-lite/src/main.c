@@ -35,6 +35,8 @@ int main() {
   // ((void (*)(void))entry)();
 
   load_prog("/bin/dummy");
+
+  _trap();
   
   panic("Should not reach here");
 }
