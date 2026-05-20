@@ -65,26 +65,18 @@ uint32_t vaddr_read(vaddr_t addr, int len) {
   if ((addr & PAGE_MASK) + len > PAGE_SIZE) {
     assert(0);
   }
-  else {
-    paddr_t paddr = addr;
-    if (cpu.cr0.protect_enable && cpu.cr0.paging) {
-      paddr = page_translate(addr, false);
-    }
-    return paddr_read(paddr, len);
+  if (cpu.cr0.protect_enable && cpu.cr0.paging) {
+    addr = page_translate(addr, false);
   }
+  return paddr_read(addr, len);
 }
 
 void vaddr_write(vaddr_t addr, int len, uint32_t data) {
   if ((addr & PAGE_MASK) + len > PAGE_SIZE) {
-    int low_len = PAGE_SIZE - (addr & PAGE_MASK);
-    vaddr_write(addr, low_len, data & (~0u >> ((4 - low_len) << 3)));
-    vaddr_write(addr + low_len, len - low_len, data >> (low_len * 8));
+    assert(0);
   }
-  else {
-    paddr_t paddr = addr;
-    if (cpu.cr0.protect_enable && cpu.cr0.paging) {
-      paddr = page_translate(addr, true);
-    }
-    paddr_write(paddr, len, data);
+  if (cpu.cr0.protect_enable && cpu.cr0.paging) {
+    addr = page_translate(addr, true);
   }
+  paddr_write(addr, len, data);
 }
