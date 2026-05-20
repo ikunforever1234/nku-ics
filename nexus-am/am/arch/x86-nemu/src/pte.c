@@ -85,5 +85,26 @@ void _unmap(_Protect *p, void *va) {
 }
 
 _RegSet *_umake(_Protect *p, _Area ustack, _Area kstack, void *entry, char *const argv[], char *const envp[]) {
-  return NULL;
+  (void)p;
+  (void)kstack;
+  (void)argv;
+  (void)envp;
+
+  _RegSet *tf = (_RegSet *)ustack.start;
+  memset(tf, 0, sizeof(*tf));
+
+  uintptr_t sp = (uintptr_t)tf + sizeof(_RegSet);
+  *(uintptr_t *)(sp) = 0;                              // fake return address
+  *(uintptr_t *)(sp + sizeof(uintptr_t)) = 0;          // argc
+  *(uintptr_t *)(sp + 2 * sizeof(uintptr_t)) = 0;      // argv
+  *(uintptr_t *)(sp + 3 * sizeof(uintptr_t)) = 0;      // envp
+
+  tf->eip = (uintptr_t)entry;
+  tf->cs = 8;
+  tf->eflags = 0x2;
+  tf->esp = sp;
+  tf->irq = 0;
+  tf->error_code = 0;
+
+  return tf;
 }
