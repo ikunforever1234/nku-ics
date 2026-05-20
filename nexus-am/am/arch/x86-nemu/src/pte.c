@@ -87,24 +87,61 @@ void _unmap(_Protect *p, void *va) {
 _RegSet *_umake(_Protect *p, _Area ustack, _Area kstack, void *entry, char *const argv[], char *const envp[]) {
   (void)p;
   (void)kstack;
-  (void)argv;
-  (void)envp;
+  size_t argc = 0;
+  size_t envc = 0;
 
-  uintptr_t *sp = (uintptr_t *)ustack.end;
-  sp -= 4;
+  if (argv != NULL) {
+    while (argv[argc] != NULL) {
+      argc++;
+    }
+  }
+  if (envp != NULL) {
+    while (envp[envc] != NULL) {
+      envc++;
+    }
+  }
 
-  _RegSet *tf = (_RegSet *)sp - 1;
+  uintptr_t argv_ptrs[argc + 1];
+  uintptr_t envp_ptrs[envc + 1];
+  char *sp = (char *)ustack.end;
+
+  for (size_t i = envc; i > 0; i--) {
+    size_t len = strlen(envp[i - 1]) + 1;
+    sp -= len;
+    memcpy(sp, envp[i - 1], len);
+    envp_ptrs[i - 1] = (uintptr_t)sp;
+  }
+  envp_ptrs[envc] = 0;
+
+  for (size_t i = argc; i > 0; i--) {
+    size_t len = strlen(argv[i - 1]) + 1;
+    sp -= len;
+    memcpy(sp, argv[i - 1], len);
+    argv_ptrs[i - 1] = (uintptr_t)sp;
+  }
+  argv_ptrs[argc] = 0;
+
+  sp = (char *)((uintptr_t)sp & ~(sizeof(uintptr_t) - 1));
+  uintptr_t *usp = (uintptr_t *)sp;
+
+  *--usp = 0;
+  for (size_t i = envc; i > 0; i--) {
+    *--usp = envp_ptrs[i - 1];
+  }
+  *--usp = 0;
+  for (size_t i = argc; i > 0; i--) {
+    *--usp = argv_ptrs[i - 1];
+  }
+  *--usp = argc;
+  *--usp = 0;
+
+  _RegSet *tf = (_RegSet *)usp - 1;
   memset(tf, 0, sizeof(*tf));
-
-  sp[0] = 0;                              // fake return address
-  sp[1] = 0;                              // argc
-  sp[2] = 0;                              // argv
-  sp[3] = 0;                              // envp
 
   tf->eip = (uintptr_t)entry;
   tf->cs = 8;
   tf->eflags = 0x2;
-  tf->esp = (uintptr_t)sp;
+  tf->esp = (uintptr_t)usp;
   tf->irq = 0;
   tf->error_code = 0;
 
