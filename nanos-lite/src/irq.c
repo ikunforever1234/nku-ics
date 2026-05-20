@@ -7,7 +7,7 @@ static _RegSet* do_event(_Event e, _RegSet* r) {
   switch (e.event) {
     case _EVENT_SYSCALL: return do_syscall(r);
     case _EVENT_TRAP:
-      Log("Got self-trap event");
+      printf("Got self-trap event");
       return r;
     default: panic("Unhandled event ID = %d", e.event);
   }
