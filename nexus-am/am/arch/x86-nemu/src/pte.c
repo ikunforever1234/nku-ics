@@ -90,19 +90,21 @@ _RegSet *_umake(_Protect *p, _Area ustack, _Area kstack, void *entry, char *cons
   (void)argv;
   (void)envp;
 
-  _RegSet *tf = (_RegSet *)ustack.start;
+  uintptr_t *sp = (uintptr_t *)ustack.end;
+  sp -= 4;
+
+  _RegSet *tf = (_RegSet *)sp - 1;
   memset(tf, 0, sizeof(*tf));
 
-  uintptr_t sp = (uintptr_t)tf + sizeof(_RegSet);
-  *(uintptr_t *)(sp) = 0;                              // fake return address
-  *(uintptr_t *)(sp + sizeof(uintptr_t)) = 0;          // argc
-  *(uintptr_t *)(sp + 2 * sizeof(uintptr_t)) = 0;      // argv
-  *(uintptr_t *)(sp + 3 * sizeof(uintptr_t)) = 0;      // envp
+  sp[0] = 0;                              // fake return address
+  sp[1] = 0;                              // argc
+  sp[2] = 0;                              // argv
+  sp[3] = 0;                              // envp
 
   tf->eip = (uintptr_t)entry;
   tf->cs = 8;
   tf->eflags = 0x2;
-  tf->esp = sp;
+  tf->esp = (uintptr_t)sp;
   tf->irq = 0;
   tf->error_code = 0;
 
