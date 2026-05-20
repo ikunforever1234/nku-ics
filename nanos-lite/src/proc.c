@@ -25,11 +25,12 @@ void load_prog(const char *filename) {
   stack.end = stack.start + sizeof(pcb[i].stack);
 
   pcb[i].tf = _umake(&pcb[i].as, stack, stack, (void *)entry, NULL, NULL);
-  current = &pcb[i];
 }
 
 _RegSet* schedule(_RegSet *prev) {
-  current->tf = prev;
+  if (current != NULL) {
+    current->tf = prev;
+  }
   current = &pcb[0];
   _switch(&current->as);
   return current->tf;
