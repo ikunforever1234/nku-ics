@@ -87,63 +87,29 @@ void _unmap(_Protect *p, void *va) {
 _RegSet *_umake(_Protect *p, _Area ustack, _Area kstack, void *entry, char *const argv[], char *const envp[]) {
   (void)p;
   (void)kstack;
-  size_t argc = 0;
-  size_t envc = 0;
 
+  int argc = 0;
   if (argv != NULL) {
     while (argv[argc] != NULL) {
       argc++;
     }
   }
-  if (envp != NULL) {
-    while (envp[envc] != NULL) {
-      envc++;
-    }
-  }
 
-  uintptr_t argv_ptrs[argc + 1];
-  uintptr_t envp_ptrs[envc + 1];
-  char *sp = (char *)ustack.end;
+  uintptr_t *stack_top = (uintptr_t *)ustack.end;
+  uintptr_t *user_argv = stack_top - 4;
 
-  for (size_t i = envc; i > 0; i--) {
-    size_t len = strlen(envp[i - 1]) + 1;
-    sp -= len;
-    memcpy(sp, envp[i - 1], len);
-    envp_ptrs[i - 1] = (uintptr_t)sp;
-  }
-  envp_ptrs[envc] = 0;
+  user_argv[0] = 0;
+  user_argv[1] = (uintptr_t)argc;
+  user_argv[2] = (uintptr_t)argv;
+  user_argv[3] = (uintptr_t)envp;
 
-  for (size_t i = argc; i > 0; i--) {
-    size_t len = strlen(argv[i - 1]) + 1;
-    sp -= len;
-    memcpy(sp, argv[i - 1], len);
-    argv_ptrs[i - 1] = (uintptr_t)sp;
-  }
-  argv_ptrs[argc] = 0;
+  _RegSet tf = { 0 };
+  tf.eflags = 0x2;
+  tf.cs = 8;
+  tf.eip = (uintptr_t)entry;
+  tf.esp = (uintptr_t)user_argv;
 
-  sp = (char *)((uintptr_t)sp & ~(sizeof(uintptr_t) - 1));
-  uintptr_t *usp = (uintptr_t *)sp;
-
-  *--usp = 0;
-  for (size_t i = envc; i > 0; i--) {
-    *--usp = envp_ptrs[i - 1];
-  }
-  *--usp = 0;
-  for (size_t i = argc; i > 0; i--) {
-    *--usp = argv_ptrs[i - 1];
-  }
-  *--usp = argc;
-  *--usp = 0;
-
-  _RegSet *tf = (_RegSet *)usp - 1;
-  memset(tf, 0, sizeof(*tf));
-
-  tf->eip = (uintptr_t)entry;
-  tf->cs = 8;
-  tf->eflags = 0x2;
-  tf->esp = (uintptr_t)usp;
-  tf->irq = 0;
-  tf->error_code = 0;
-
-  return tf;
+  _RegSet *frame = (_RegSet *)(user_argv - 1);
+  *frame = tf;
+  return frame;
 }
