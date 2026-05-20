@@ -1,4 +1,5 @@
 #include <x86.h>
+#include <string.h>
 
 #define PG_ALIGN __attribute((aligned(PGSIZE)))
 
@@ -66,6 +67,18 @@ void _switch(_Protect *p) {
 }
 
 void _map(_Protect *p, void *va, void *pa) {
+  uint32_t pdir_idx = PDX(va);
+  uint32_t ptab_idx = PTX(va);
+
+  PDE *pdir = (PDE *)p->ptr;
+  if (!(pdir[pdir_idx] & PTE_P)) {
+    PTE *ptab = (PTE *)palloc_f();
+    memset(ptab, 0, PGSIZE);
+    pdir[pdir_idx] = PTE_ADDR(ptab) | PTE_P | PTE_W | PTE_U;
+  }
+
+  PTE *ptab = (PTE *)PTE_ADDR(pdir[pdir_idx]);
+  ptab[ptab_idx] = PTE_ADDR(pa) | PTE_P | PTE_W | PTE_U;
 }
 
 void _unmap(_Protect *p, void *va) {
