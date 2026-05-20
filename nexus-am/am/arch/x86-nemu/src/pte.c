@@ -87,30 +87,26 @@ void _unmap(_Protect *p, void *va) {
 _RegSet *_umake(_Protect *p, _Area ustack, _Area kstack, void *entry, char *const argv[], char *const envp[]) {
   (void)p;
   (void)kstack;
+  (void)argv;
+  (void)envp;
 
-  int argc = 0;
-  if (argv != NULL) {
-    while (argv[argc] != NULL) {
-      argc ++;
-    }
-  }
+  uintptr_t *sp = (uintptr_t *)ustack.end;
+  sp -= 4;
 
-  uintptr_t *user_sp = (uintptr_t *)ustack.end - 4;
-  user_sp[0] = 0;
-  user_sp[1] = (uintptr_t)argc;
-  user_sp[2] = (uintptr_t)argv;
-  user_sp[3] = (uintptr_t)envp;
+  _RegSet *tf = (_RegSet *)sp - 1;
+  memset(tf, 0, sizeof(*tf));
 
-  _RegSet tf;
-  memset(&tf, 0, sizeof(tf));
+  sp[0] = 0;                              // fake return address
+  sp[1] = 0;                              // argc
+  sp[2] = 0;                              // argv
+  sp[3] = 0;                              // envp
 
-  tf.eip = (uintptr_t)entry;
-  tf.cs = 8;
-  tf.eflags = 0x2;
-  tf.esp = (uintptr_t)user_sp;
+  tf->eip = (uintptr_t)entry;
+  tf->cs = 8;
+  tf->eflags = 0x2;
+  tf->esp = (uintptr_t)sp;
+  tf->irq = 0;
+  tf->error_code = 0;
 
-  _RegSet *frame = (_RegSet *)(user_sp - 1);
-  memcpy(frame, &tf, sizeof(tf));
-
-  return frame;
+  return tf;
 }
