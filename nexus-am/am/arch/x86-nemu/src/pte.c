@@ -87,21 +87,16 @@ void _unmap(_Protect *p, void *va) {
 _RegSet *_umake(_Protect *p, _Area ustack, _Area kstack, void *entry, char *const argv[], char *const envp[]) {
   (void)p;
   (void)kstack;
-
-  int argc = 0;
-  if (argv != NULL) {
-    while (argv[argc] != NULL) {
-      argc++;
-    }
-  }
+  (void)argv;
+  (void)envp;
 
   uintptr_t *stack_top = (uintptr_t *)ustack.end;
   uintptr_t *user_argv = stack_top - 4;
 
   user_argv[0] = 0;
-  user_argv[1] = (uintptr_t)argc;
-  user_argv[2] = (uintptr_t)argv;
-  user_argv[3] = (uintptr_t)envp;
+  user_argv[1] = 0;
+  user_argv[2] = 0;
+  user_argv[3] = 0;
 
   _RegSet tf = { 0 };
   tf.eflags = 0x2;
