@@ -103,7 +103,7 @@ _RegSet *_umake(_Protect *p, _Area ustack, _Area kstack, void *entry, char *cons
 
   tf->eip = (uintptr_t)entry;
   tf->cs = 8;
-  tf->eflags = 0x2;
+  tf->eflags = 0x202;
   tf->esp = (uintptr_t)sp;
   tf->irq = 0;
   tf->error_code = 0;
