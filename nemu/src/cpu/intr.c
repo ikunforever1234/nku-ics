@@ -12,6 +12,7 @@ void raise_intr(uint8_t NO, vaddr_t ret_addr) {
   vaddr_t target = (desc_hi & 0xffff0000) | (desc_lo & 0xffff);
 
   rtl_push(&cpu.eflags);
+  cpu.IF = 0;
   rtl_li(&t0, 0x8);
   rtl_push(&t0);
   rtl_li(&t0, ret_addr);
@@ -21,4 +22,5 @@ void raise_intr(uint8_t NO, vaddr_t ret_addr) {
 }
 
 void dev_raise_intr() {
+  cpu.INTR = true;
 }
