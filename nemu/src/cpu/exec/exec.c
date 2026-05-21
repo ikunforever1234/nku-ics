@@ -255,7 +255,6 @@ void exec_wrapper(bool print_flag) {
   if (cpu.INTR & cpu.IF) {
     cpu.INTR = false;
     raise_intr(TIMER_IRQ, cpu.eip);
-    update_eip();
   }
 
 #ifdef DIFF_TEST
