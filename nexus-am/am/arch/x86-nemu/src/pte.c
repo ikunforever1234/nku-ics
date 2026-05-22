@@ -96,10 +96,10 @@ _RegSet *_umake(_Protect *p, _Area ustack, _Area kstack, void *entry, char *cons
   _RegSet *tf = (_RegSet *)sp - 1;
   memset(tf, 0, sizeof(*tf));
 
-  sp[0] = 0;                              // fake return address
-  sp[1] = 0;                              // argc
-  sp[2] = 0;                              // argv
-  sp[3] = 0;                              // envp
+  sp[0] = 0;  // fake return address
+  sp[1] = 0;  // argc
+  sp[2] = 0;  // argv
+  sp[3] = 0;  // envp
 
   tf->eip = (uintptr_t)entry;
   tf->cs = 8;
