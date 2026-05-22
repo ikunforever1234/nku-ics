@@ -12,7 +12,7 @@ static _RegSet* do_event(_Event e, _RegSet* r) {
       // return schedule(r);
       return do_syscall(r);
     case _EVENT_TRAP:
-      // printf("Got self-trap event\n");
+      printf("Got self-trap event\n");
       return schedule(r);
     case _EVENT_IRQ_TIME:
       // printf("timer interrupt\n");
