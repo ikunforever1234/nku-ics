@@ -5,7 +5,7 @@
 static PCB pcb[MAX_NR_PROC];
 static int nr_proc = 0;
 PCB *current = NULL;
-// static int pal_budget = 0;
+static int pal_budget = 0;
 
 uintptr_t loader(_Protect *as, const char *filename);
 
@@ -32,7 +32,26 @@ _RegSet* schedule(_RegSet *prev) {
   if (current != NULL) {
     current->tf = prev;
   }
-  current = (current == &pcb[0] ? &pcb[1] : &pcb[0]);
+  // current = (current == &pcb[0] ? &pcb[1] : &pcb[0]);
+
+  if (current == NULL) {
+    current = &pcb[0];
+    pal_budget = 0;
+  }
+  else if (current == &pcb[0]) {
+    if (nr_proc > 1 && pal_budget + 1 >= 10) {
+      current = &pcb[1];
+      pal_budget = 0;
+    }
+    else {
+      current = &pcb[0];
+      pal_budget ++;
+    }
+  }
+  else {
+    current = &pcb[0];
+  }
+
   _switch(&current->as);
   return current->tf;
 }
