@@ -39,7 +39,7 @@ _RegSet* schedule(_RegSet *prev) {
     pal_budget = 0;
   }
   else if (current == &pcb[0]) {
-    if (nr_proc > 1 && pal_budget + 1 >= 10) {
+    if (nr_proc > 1 && pal_budget + 1 >= 1) {
       current = &pcb[1];
       pal_budget = 0;
     }
