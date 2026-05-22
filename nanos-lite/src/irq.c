@@ -8,14 +8,14 @@ _RegSet* schedule(_RegSet *prev);
 static _RegSet* do_event(_Event e, _RegSet* r) {
   switch (e.event) {
     case _EVENT_SYSCALL:
-      do_syscall(r);
-      return schedule(r);
-      // return do_syscall(r);
+      // do_syscall(r);
+      // return schedule(r);
+      return do_syscall(r);
     case _EVENT_TRAP:
       printf("Got self-trap event\n");
       return schedule(r);
     case _EVENT_IRQ_TIME:
-      // printf("timer interrupt\n");
+      printf("timer interrupt\n");
       return schedule(r);
     default: panic("Unhandled event ID = %d", e.event);
   }
