@@ -15,7 +15,7 @@ static _RegSet* do_event(_Event e, _RegSet* r) {
       // printf("Got self-trap event\n");
       return schedule(r);
     case _EVENT_IRQ_TIME:
-      printf("timer interrupt\n");
+      // printf("timer interrupt\n");
       return schedule(r);
     default: panic("Unhandled event ID = %d", e.event);
   }
