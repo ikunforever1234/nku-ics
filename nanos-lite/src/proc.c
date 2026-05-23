@@ -74,9 +74,9 @@ _RegSet* schedule(_RegSet *prev) {
     current->tf = prev;
   }
 
-  if (current_game == NULL) {
-    current_game = &pcb[0];
-  }
+  // if (current_game == NULL) {
+  //   current_game = &pcb[0];
+  // }
 
   if (current == NULL) {
     current = current_game;

@@ -17,13 +17,14 @@ size_t events_read(void *buf, size_t len) {
 
   if (key != _KEY_NONE) {
     // const char *type = (key & KEYDOWN_MASK) ? "kd" : "ku";
+
     int keydown = key & KEYDOWN_MASK;
     key &= ~KEYDOWN_MASK;
     if (keydown && key == _KEY_F12) {
       switch_game();
     }
-
     const char *type = keydown ? "kd" : "ku";
+
     sprintf(event, "%s %s\n", type, keyname[key]);
   }
   else {
