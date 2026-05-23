@@ -19,5 +19,6 @@ typedef union {
 
 extern PCB *current;
 _RegSet* schedule(_RegSet *prev);
+void switch_game(void);
 
 #endif
