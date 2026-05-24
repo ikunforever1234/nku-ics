@@ -2,7 +2,6 @@
 #define __FLOAT_H__
 
 #include "assert.h"
-#include <stdint.h>
 
 typedef int FLOAT;
 
@@ -11,16 +10,16 @@ static inline int F2int(FLOAT a) {
 }
 
 static inline FLOAT int2F(int a) {
-  return (FLOAT)((int64_t)a * (1 << 16));
+  return a * (1 << 16);
 }
 
 static inline FLOAT F_mul_int(FLOAT a, int b) {
-  return (FLOAT)((int64_t)a * b);
+  return a * b;
 }
 
 static inline FLOAT F_div_int(FLOAT a, int b) {
   assert(b != 0);
-  return (FLOAT)(a / b);
+  return a / b;
 }
 
 FLOAT f2F(float);

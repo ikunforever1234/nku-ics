@@ -3,12 +3,30 @@
 #include <assert.h>
 
 FLOAT F_mul_F(FLOAT a, FLOAT b) {
-  return (FLOAT)(((__int128)a * b) / (1 << 16));
+  return (FLOAT)(((int64_t)a * b) >> 16);
 }
 
 FLOAT F_div_F(FLOAT a, FLOAT b) {
   assert(b != 0);
-  return (FLOAT)(((__int128)a * (1 << 16)) / b);
+
+  uint64_t dividend = ((uint64_t)((int64_t)a < 0 ? -(int64_t)a : (int64_t)a)) << 16;
+  uint64_t divisor = (uint64_t)((int64_t)b < 0 ? -(int64_t)b : (int64_t)b);
+  uint64_t quotient = 0;
+  uint64_t remainder = 0;
+
+  for (int i = 63; i >= 0; i--) {
+    remainder = (remainder << 1) | ((dividend >> i) & 1ULL);
+    if (remainder >= divisor) {
+      remainder -= divisor;
+      quotient |= 1ULL << i;
+    }
+  }
+
+  if ((a < 0) ^ (b < 0)) {
+    return (FLOAT)(-(int64_t)quotient);
+  }
+
+  return (FLOAT)quotient;
 }
 
 FLOAT f2F(float a) {
@@ -40,9 +58,9 @@ FLOAT f2F(float a) {
     return 0;
   }
 
-  unsigned __int128 mant = ((unsigned __int128)1 << 23) | frac;
+  int64_t mant = (1LL << 23) | frac;
   int shift = (int)exp - 134;
-  unsigned __int128 abs_value;
+  int64_t abs_value;
 
   if (shift >= 0) {
     abs_value = mant << shift;
@@ -59,7 +77,7 @@ FLOAT f2F(float a) {
 }
 
 FLOAT Fabs(FLOAT a) {
-  return a < 0 ? (FLOAT)(-(int64_t)a) : a;
+  return a < 0 ? -a : a;
 }
 
 /* Functions below are already implemented */
