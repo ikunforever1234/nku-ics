@@ -82,7 +82,7 @@ _RegSet* schedule(_RegSet *prev) {
     current = current_game;
   }
   else if (current == current_game) {
-    if (nr_proc > 1 && game_budget + 1 >= 5000) {
+    if (nr_proc > 1 && game_budget + 1 >= 10000) {
       current = &pcb[1];
       game_budget = 0;
     }
