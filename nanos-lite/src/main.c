@@ -31,14 +31,14 @@ int main() {
 
   init_fs();
 
-  // uint32_t entry = loader(NULL, "/bin/dummy");
-  // ((void (*)(void))entry)();
+  uint32_t entry = loader(NULL, "/bin/dummy");
+  ((void (*)(void))entry)();
 
-  load_prog("/bin/pal");
-  load_prog("/bin/hello");
-  load_prog("/bin/videotest");
+  // load_prog("/bin/pal");
+  // load_prog("/bin/hello");
+  // load_prog("/bin/videotest");
 
-  _trap();
+  // _trap();
   
   panic("Should not reach here");
 }
