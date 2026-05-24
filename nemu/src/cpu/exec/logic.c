@@ -104,6 +104,28 @@ make_EHelper(shr) {
   print_asm_template2(shr);
 }
 
+make_EHelper(shrd) {
+  rtl_andi(&t0, &id_src->val, 0x1f);
+  if (t0 == 0) {
+    print_asm_template2(shrd);
+    return;
+  }
+
+  uint32_t bits = id_dest->width * 8;
+  uint32_t mask = (bits == 32 ? 0xffffffffu : ((1u << bits) - 1));
+  uint32_t dest = id_dest->val & mask;
+  uint32_t src = id_src2->val & mask;
+  uint32_t n = t0;
+  uint64_t merged = ((uint64_t)src << bits) | dest;
+  uint32_t res = (uint32_t)((merged >> n) & mask);
+
+  rtl_li(&t2, res);
+  operand_write(id_dest, &t2);
+  rtl_update_ZFSF(&t2, id_dest->width);
+
+  print_asm_template2(shrd);
+}
+
 make_EHelper(setcc) {
   uint8_t subcode = decoding.opcode & 0xf;
   rtl_setcc(&t2, subcode);

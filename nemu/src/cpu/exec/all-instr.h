@@ -51,6 +51,8 @@ make_EHelper(iret);
 make_EHelper(mov_r2cr);
 make_EHelper(mov_cr2r);
 
+make_EHelper(shrd);
+
 make_EHelper(operand_size);
 make_EHelper(nop);
 
