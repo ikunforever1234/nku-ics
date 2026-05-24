@@ -38,7 +38,7 @@ int main() {
   // load_prog("/bin/hello");
   // load_prog("/bin/videotest");
 
-  // _trap();
+  _trap();
   
   panic("Should not reach here");
 }
